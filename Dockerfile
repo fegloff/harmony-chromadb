@@ -1,9 +1,6 @@
-FROM ghcr.io/chroma-core/chroma:latest
-
-ENV CHROMA_DB_IMPL=clickhouse
-ENV CLICKHOUSE_HOST=clickhouse
-ENV CLICKHOUSE_PORT=8123
-
-EXPOSE 8000
-
-CMD ["chroma"]
+FROM python:3.8
+RUN pip install uvicorn
+RUN pip install chromadb==0.3.25
+RUN pip install --force-reinstall fastapi==0.85.1
+COPY server.py .
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
