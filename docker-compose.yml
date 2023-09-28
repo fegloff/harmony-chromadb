@@ -6,9 +6,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
-    networks:
-      - net
+#     networks:
+#       - net
 
-networks:
-  net:
-    driver: bridge
+# networks:
+#   net:
+#     driver: bridge
