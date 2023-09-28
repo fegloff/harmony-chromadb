@@ -12,6 +12,6 @@ COPY log_conf.yaml /app/
 COPY server.py /app/
 
 WORKDIR /app
-
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000","--log-config","/app/log_conf.yaml"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
+# CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000", "--log-config", "/app/log_conf.yaml"]
 
