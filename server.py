@@ -9,10 +9,12 @@ from chromadb.server.fastapi import FastAPI, Request
 logger = logging.getLogger(__name__)
 
 settings = chromadb.config.Settings(
-    chroma_db_impl = 'clickhouse',
-    clickhouse_host ='clickhouse',
-    clickhouse_port = 8123 
+    is_persistent = True,
+    persist_directory = "./chroma"
 )
+
+server = FastAPI(settings)
+app = server.app
 
 server = FastAPI(settings)
 app = server.app()
