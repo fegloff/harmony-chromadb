@@ -1,3 +1,4 @@
 runtime: custom
-service: chromadb-storage
+service: chromadb
 env: flex
+# entrypoint: gunicorn -b :$PORT main:app

@@ -1,3 +1,6 @@
+networks:
+  net:
+    driver: bridge
 services:
   chroma:
     image: chroma
@@ -6,9 +9,35 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
-#     networks:
-#       - net
+    # links:
+    #  - "web"  
+    networks:
+      - net
 
-# networks:
-#   net:
-#     driver: bridge
+
+
+#  "version: '3.9'\n",
+#                                 "\n",
+#                                 "networks:\n",
+#                                 "  net:\n",
+#                                 "    driver: bridge\n",
+#                                 "\n",
+#                                 "services:\n",
+#                                 "  server:\n",
+#                                 {
+#                                     "Fn::Sub": "    image: ghcr.io/chroma-core/chroma:${ChromaVersion}\n"
+#                                 },
+#                                 "    volumes:\n",
+#                                 "      - index_data:/index_data\n",
+#                                 "    ports:\n",
+#                                 "      - 8000:8000\n",
+#                                 "    networks:\n",
+#                                 "      - net\n",
+#                                 "\n",
+#                                 "volumes:\n",
+#                                 "  index_data:\n",
+#                                 "    driver: local\n",
+#                                 "  backups:\n",
+#                                 "    driver: local\n",
+#                                 "\n",
+#                                 "EOF\n",
