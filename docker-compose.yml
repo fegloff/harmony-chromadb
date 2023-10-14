@@ -1,43 +1,32 @@
+version: '3.9'
+
 networks:
   net:
     driver: bridge
+
 services:
-  chroma:
-    image: chroma
+  server:
+    image: server
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./:/chroma
+      # Be aware that indexed data are located in "/chroma/chroma/"
+      # Default configuration for persist_directory in chromadb/config.py
+    command: uvicorn chromadb.app:app --reload --workers 1 --host 0.0.0.0 --port 8000 --log-config chromadb/log_config.yml
+    environment:
+      - IS_PERSISTENT=TRUE
+      - CHROMA_SERVER_AUTH_PROVIDER=${CHROMA_SERVER_AUTH_PROVIDER}
+      - CHROMA_SERVER_AUTH_CREDENTIALS_FILE=${CHROMA_SERVER_AUTH_CREDENTIALS_FILE}
+      - CHROMA_SERVER_AUTH_CREDENTIALS=${CHROMA_SERVER_AUTH_CREDENTIALS}
+      - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER=${CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER}
+      - PERSIST_DIRECTORY=${PERSIST_DIRECTORY:-/chroma/chroma}
     ports:
       - 8000:8000
-    # links:
-    #  - "web"  
     networks:
       - net
 
-
-
-#  "version: '3.9'\n",
-#                                 "\n",
-#                                 "networks:\n",
-#                                 "  net:\n",
-#                                 "    driver: bridge\n",
-#                                 "\n",
-#                                 "services:\n",
-#                                 "  server:\n",
-#                                 {
-#                                     "Fn::Sub": "    image: ghcr.io/chroma-core/chroma:${ChromaVersion}\n"
-#                                 },
-#                                 "    volumes:\n",
-#                                 "      - index_data:/index_data\n",
-#                                 "    ports:\n",
-#                                 "      - 8000:8000\n",
-#                                 "    networks:\n",
-#                                 "      - net\n",
-#                                 "\n",
-#                                 "volumes:\n",
-#                                 "  index_data:\n",
-#                                 "    driver: local\n",
-#                                 "  backups:\n",
-#                                 "    driver: local\n",
-#                                 "\n",
-#                                 "EOF\n",
+volumes:
+  backups:
+    driver: local

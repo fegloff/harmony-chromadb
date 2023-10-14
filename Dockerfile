@@ -1,17 +1,33 @@
-FROM python:3.8
+FROM python:3.10-slim-bookworm as builder
 
-RUN pip install uvicorn
-RUN pip install chromadb==0.4.13
-RUN pip install fastapi==0.95.2
+RUN apt-get update --fix-missing && apt-get install -y --fix-missing \
+    build-essential \
+    gcc \
+    g++ && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY log_conf.yaml /app/
-COPY server.py /app/
+RUN mkdir /install
+WORKDIR /install
 
-WORKDIR /app
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000", "--log-config", "/app/log_conf.yaml"]
+COPY ./requirements.txt requirements.txt
 
+RUN pip install --no-cache-dir --upgrade --prefix="/install" -r requirements.txt
 
-# ENV PIP_ROOT_USER_ACTION=ignore
+FROM python:3.10-slim-bookworm as final
 
-# RUN pip install --upgrade pip
-# RUN pip install gunicorn
+RUN apt-get update --fix-missing && apt-get install -y --fix-missing \
+    build-essential \
+    gcc \
+    g++ && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /chroma
+WORKDIR /chroma
+
+COPY --from=builder /install /usr/local
+COPY ./bin/docker_entrypoint.sh /docker_entrypoint.sh
+COPY ./ /chroma
+
+EXPOSE 8000
+
+CMD ["/docker_entrypoint.sh"]
